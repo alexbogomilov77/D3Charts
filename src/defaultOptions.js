@@ -20,7 +20,7 @@ export default {
   },
   curve: null,
   debug: false,
-  axisTicks: 5,
+  axisTicks: 15,
   bars: {
     gradient: false
   },

@@ -24,7 +24,7 @@ const options = {
   marks: false,
   axis: {
     valuesY: true,
-    linesY: false,
+    linesY: true,
     linesX: true,
     valuesX: true
   },

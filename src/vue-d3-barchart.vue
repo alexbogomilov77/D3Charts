@@ -16,12 +16,23 @@
         :y1="a.y"
         :y2="a.y"
       />
-      <g class="axis">
-        <line class="x-axis" :x2="w" :y1="hh" :y2="hh" />
+      <line
+        class="line-y"
+        v-for="(a,i) in axisY"
+        :key="i"
+        :y1="hh"
+        :x1="a.y"
+        :x2="a.y"
+      />
+      <!-- <g class="axis">
+        <line class="x-axis" :x1='oXa' :x2="w" :y1="hh" :y2="hh" />
         <line class="y-axis" y1="0" :y2="hh" />
-      </g>
-      <g class="axis-labels">
+      </g> -->
+      <!-- <g class="axis-labels">
         <text class="axis-label" v-for="(a,i) in axisY" :key="i" x="0" :y="a.y">{{a.value}}</text>
+      </g> -->
+      <g class="axis-labels">
+        <text class="axis-label" v-for="(a,i) in axisY" :key="i" :x="a.x" :y="a.y">{{a.value}}</text>
       </g>
     </g>
     <g class="bars">
@@ -237,6 +248,31 @@ export default {
       }
       return axis;
     },
+    // axisX() {
+    //   let ticks = this.opts.axisXTicks;
+    //   ticks = ticks <= this.max ? ticks : this.max;
+    //   const axis = [];
+
+    //   const scaleV = d3
+    //     .scaleLinear()
+    //     .domain([0, ticks])
+    //     .rangeRound([this.min, this.max]);
+
+    //   const scaleY = d3
+    //     .scaleLinear()
+    //     .domain([0, ticks])
+    //     .rangeRound([this.hh, 0]);
+
+    //   for (let i = 0; i <= ticks; i++) {
+    //     const v = scaleV(i);
+    //     axis.push({
+    //       v: v,
+    //       value: this.formatY(v),
+    //       y: scaleY(i),
+    //     });
+    //   }
+    //   return axis;
+    // },
     bars() {
       const { scaleX, scaleY, percentX, percentY, colors, barW } = this;
       return this.mappedData.map((m, i) => {
@@ -548,6 +584,23 @@ export default {
 };
 </script>
 <style lang="stylus">
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 2px;
+}
+
+.grid line {
+  stroke: lightgrey;
+  stroke-opacity: 0.7;
+  shape-rendering: crispEdges;
+}
+
+.grid path {
+  stroke-width: 0;
+}
+
 .label {
   font-size: 12px;
   fill: white;
@@ -565,6 +618,7 @@ export default {
 
 .bar {
   fill: cyan;
+  opacity: 0.2;
   stroke: none;
 }
 
