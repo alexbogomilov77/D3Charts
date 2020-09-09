@@ -1,13 +1,13 @@
 <template>
   <div class="example">
     <div class="charts">
-      <div class="chart" v-for="(chart,chartName) in charts" :key="chart">
+      <div class="chart" v-for="(chart, i) in charts" :key="i">
         <div class="title">{{ activeName }}</div>
         <div class="bar-chart">
           <d3-barchart
             :data="chart.chartData"
             :options="chart.options"
-            :key="chartName"
+            :key="i"
             @namePassed="namePassed($event)">
           </d3-barchart>
         </div>

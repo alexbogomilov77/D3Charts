@@ -7,17 +7,17 @@ const title = 'Bars'
 //   return { x, y }
 // })
 const chartData = [
-  { x: 2, y: 16, name: 'James' },
-  { x: 10, y: 30, name: 'Tom' },
+  { x: 2, y: 16, name: 'Shelley' },
+  { x: 10, y: 30, name: 'Hardy' },
   { x: 25, y: 80, name: 'Ahmet' },
   { x: 78, y: 34, name: 'Alex' },
-  { x: 7, y: 66, name: 'James' },
+  { x: 7, y: 66, name: 'Jeckie' },
   { x: 16, y: 20, name: 'Tom' },
-  { x: 55, y: 44, name: 'Ahmet' },
-  { x: 21, y: 36, name: 'James' },
-  { x: 18, y: 60, name: 'Tom' },
-  { x: 29, y: 90, name: 'Ahmet' },
-  { x: 68, y: 24, name: 'Alex' },
+  { x: 55, y: 44, name: 'Wetz' },
+  { x: 21, y: 36, name: 'Butler' },
+  { x: 18, y: 60, name: 'Scott' },
+  { x: 29, y: 90, name: 'Katranci' },
+  { x: 68, y: 24, name: 'Marinov' },
   { x: 97, y: 6, name: 'James' },
   ]
 const options = {

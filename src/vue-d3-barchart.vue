@@ -25,7 +25,7 @@
       <rect
         v-for="(d,i) in bars"
         :key="i"
-        class="bar"
+        :class="['bar', {active: barN(d) === activeBar}]"
         :width="barX(d)"
         :height="25"
         :x="0"
@@ -110,6 +110,7 @@ export default {
   },
   data() {
     return {
+      activeBar: '',
       w: 800,
       h: 500,
       colorInterpol: null,
@@ -587,6 +588,7 @@ export default {
       return rnd;
     },
     barClick(event, bar) {
+      this.activeBar = bar.d.name
       this.$emit("namePassed", bar.d.name);
       this.over = this.over === bar ? false : bar;
       this.$emit("barClick", { bar, event });
@@ -635,6 +637,9 @@ export default {
     opacity: 1;
     transition: ease 0.2s;
     cursor: pointer;
+  }
+  &.active {
+    opacity: 1;
   }
 }
 
