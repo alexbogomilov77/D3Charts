@@ -4,12 +4,11 @@
       <div class="chart" v-for="(chart, i) in charts" :key="i">
         <div class="title">{{ activeName }}</div>
         <div class="bar-chart">
-          <d3-barchart
-            :data="chart.chartData"
-            :options="chart.options"
-            :key="i"
+          <d3chart
+            v-if="savedData"
+            :calldata="savedData"
             @namePassed="namePassed($event)">
-          </d3-barchart>
+          </d3chart>
         </div>
       </div>
     </div>
@@ -18,21 +17,61 @@
 <script>
 /* eslint-disable */
 import copyIcon from "../assets/copy.svg?raw";
-import d3Barchart from "../vue-d3-barchart.vue";
-// import bars from './data/bars'
-// import curve from './data/curve'
-// import points from './data/points'
-// import curvePoints from './data/curvePoints'
-// import curveColors from './data/curveColors'
+// import d3Barchart from "../vue-d3-barchart.vue";
+import d3chart from "@/d3chart.vue";
 import bars2 from "./data/bars2";
+import calldata from "@/calldata.json";
+// const d3 = Object.assign({}, csv);
 
 export default {
   name: "bar-chart-example",
   components: {
-    d3Barchart,
+    d3chart,
   },
   data() {
     return {
+      savedData: [
+        {
+          "name": "Shelley",
+          "duration": 36
+        },
+        {
+          "name": "Hardy",
+          "duration": 16
+        },
+        {
+          "name": "Ahmet",
+          "duration": 20
+        },
+        {
+          "name": "Alex",
+          "duration": 106
+        },
+        {
+          "name": "Jeckie",
+          "duration": 80
+        },
+        {
+          "name": "Tom",
+          "duration": 50
+        },
+        {
+          "name": "Wetz",
+          "duration": 3
+        },
+        {
+          "name": "Butler",
+          "duration": 33
+        },
+        {
+          "name": "Scott",
+          "duration": 77
+        },
+        {
+          "name": "Katranci",
+          "duration": 40
+        }
+      ],
       copyIcon,
       charts: { bars2 },
       activeName: "",
