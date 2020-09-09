@@ -26,7 +26,7 @@
         v-for="(d,i) in bars"
         :key="i"
         :class="['bar', {active: barN(d) === activeBar}]"
-        :width="barX(d)"
+        :width="barM(d)"
         :height="25"
         :x="0"
         :y="barY(d) - 21"
@@ -41,7 +41,7 @@
         class="label"
         :y="barY(d)"
         :x="barX(d) - 70"
-      >{{barX(d) + 'min'}}</text>
+      >{{barM(d) + 'min'}}</text>
       <!-- names -->
       <text v-for="(d,i) in bars" :key="i.percentX" class="names" :y="barY(d)" :x="-70">{{barN(d)}}</text>
     </g>
@@ -524,7 +524,7 @@ export default {
     },
     barX(d) {
       let { x } = d;
-      x += this.margin;
+      // x += this.margin;
       return x;
       // return (x > -1) ? x : 0
     },
@@ -538,7 +538,13 @@ export default {
         if (key === "name") {
           return value;
         }
-        // console.log(`${key}: ${value}`);
+      }
+    },
+    barM(d) {
+      for (const [key, value] of Object.entries(d.d)) {
+        if (key === "y") {
+          return value;
+        }
       }
     },
     txtX(d) {
