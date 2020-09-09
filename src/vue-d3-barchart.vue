@@ -1,10 +1,27 @@
 <template>
   <svg class="d3-bar-chart" v-if="bars.length" :width="w" :height="h">
-    <g class="axis" v-if="opts.axis">
+    <!-- <g class="axis" v-if="opts.axis">
       <line class="x-axis" :x1="oXa" :x2="w" :y1="hh" :y2="hh" />
       <line class="y-axis" :x1="oXa" :x2="oXa " y1="0" :y2="hh" />
       <g class="axis-labels" v-for="(a,i) in axisY" :key="i">
         <text class="axis-label" v-if="opts.axis.valuesY" x="0" :y="a.y">{{a.value}}</text>
+      </g>
+    </g>-->
+    <g class="lines">
+      <line
+        class="line-y"
+        v-for="(a,i) in axisY"
+        :key="i"
+        :x2="w"
+        :y1="a.y"
+        :y2="a.y"
+      />
+      <g class="axis">
+        <line class="x-axis" :x2="w" :y1="hh" :y2="hh" />
+        <line class="y-axis" y1="0" :y2="hh" />
+      </g>
+      <g class="axis-labels">
+        <text class="axis-label" v-for="(a,i) in axisY" :key="i" x="0" :y="a.y">{{a.value}}</text>
       </g>
     </g>
     <g class="bars">
@@ -13,9 +30,9 @@
         :key="i"
         class="bar"
         :width="barX(d)"
-        :height="5"
-        :x="15"
-        :y="barY(d)"
+        :height="25"
+        :x="0"
+        :y="barY(d) - 21"
         :style="barStyle(d)"
         @click="barClick($event,d)"
       />
@@ -25,18 +42,10 @@
         :key="i.percentX"
         class="label"
         :y="barY(d)"
-        :x="barX(d) - 20">
-        {{barX(d) + 'min'}}
-      </text>
+        :x="barX(d) - 70"
+      >{{barX(d) + 'min'}}</text>
       <!-- names -->
-      <text
-        v-for="(d,i) in bars"
-        :key="i.percentX"
-        class="names"
-        :y="barY(d)"
-        :x="-70">
-        {{barN(d)}}
-      </text>
+      <text v-for="(d,i) in bars" :key="i.percentX" class="names" :y="barY(d)" :x="-70">{{barN(d)}}</text>
     </g>
     <!-- <g class="dummies">
         <rect
@@ -53,7 +62,7 @@
           @click="barClick($event,d)"
           @touchstart="barClick($event,d)"
         />
-    </g> -->
+    </g>-->
   </svg>
 </template>
 <script>
@@ -114,7 +123,6 @@ export default {
   },
   mounted() {
     this.onResize();
-    // this.addNames();
   },
   watch: {
     options(newValue) {
@@ -346,26 +354,6 @@ export default {
     },
   },
   methods: {
-    addNames() {
-        const svg = d3.select('svg');
-        const g = svg.selectAll("g")
-        let self = this
-          g.append("text")
-          .attr("class", "bars")
-          .attr("y", 20 / 2)
-          .attr("x", 10 / 2)
-          .attr("dx", 5)
-          .attr("dy", ".35em")
-          .attr("text-anchor", "end")
-          .text('test')
-          .text(function (d) {
-            return d.value + "%";
-          })
-          .attr("x", function () {
-            var width = this.getBBox().margin;
-            return Math.max(width + valueMargin, scale(d.value));
-          });
-    },
     curve(opts) {
       const data = this.bars;
       const barw = this.barW;
@@ -493,17 +481,17 @@ export default {
       // return (x > -1) ? x : 0
     },
     barY(d) {
-      const y = this.h - d.y - this.margin / 2;
+      const y = this.h - d.y - this.margin / 2
       return y;
       // return (y > -1) ? y : 0
     },
     barN(d) {
       for (const [key, value] of Object.entries(d.d)) {
-        if(key === 'name') {
-          return value
+        if (key === "name") {
+          return value;
         }
-          // console.log(`${key}: ${value}`);
-        }
+        // console.log(`${key}: ${value}`);
+      }
     },
     txtX(d) {
       return (
@@ -561,11 +549,14 @@ export default {
 </script>
 <style lang="stylus">
 .label {
-  fill: darkgreen;
+  font-size: 12px;
+  fill: white;
 }
+
 .names {
   fill: darkgreen;
 }
+
 .d3-bar-chart {
   max-height: 100%;
   max-width: 100%;
