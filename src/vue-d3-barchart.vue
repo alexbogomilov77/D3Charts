@@ -1,38 +1,24 @@
 <template>
   <svg class="d3-bar-chart" v-if="bars.length" :width="w" :height="h">
     <!-- <g class="axis" v-if="opts.axis">
-      <line class="x-axis" :x1="oXa" :x2="w" :y1="hh" :y2="hh" />
-      <line class="y-axis" :x1="oXa" :x2="oXa " y1="0" :y2="hh" />
-      <g class="axis-labels" v-for="(a,i) in axisY" :key="i">
-        <text class="axis-label" v-if="opts.axis.valuesY" x="0" :y="a.y">{{a.value}}</text>
-      </g>
+        <line class="x-axis" :x1="oXa" :x2="w" :y1="hh" :y2="hh" />
+        <line class="y-axis" :x1="oXa" :x2="oXa " y1="0" :y2="hh" />
+        <g class="axis-labels" v-for="(a,i) in axisY" :key="i">
+          <text class="axis-label" v-if="opts.axis.valuesY" x="0" :y="a.y">{{a.value}}</text>
+        </g>
     </g>-->
     <g class="lines">
-      <line
-        class="line-y"
-        v-for="(a,i) in axisY"
-        :key="i"
-        :x2="w"
-        :y1="a.y"
-        :y2="a.y"
-      />
-      <line
-        class="line-y"
-        v-for="(a,i) in axisY"
-        :key="i"
-        :y1="hh"
-        :x1="a.y"
-        :x2="a.y"
-      />
+      <!-- <line class="line-y" v-for="(a,i) in axisY" :key="i" :x2="w" :y1="a.y" :y2="a.y" /> -->
+      <line class="line-y" v-for="a in axisY" :key="a.y" :y1="hh" :x1="a.y" :x2="a.y" />
       <!-- <g class="axis">
-        <line class="x-axis" :x1='oXa' :x2="w" :y1="hh" :y2="hh" />
-        <line class="y-axis" y1="0" :y2="hh" />
-      </g> -->
+          <line class="x-axis" :x1='oXa' :x2="w" :y1="hh" :y2="hh" />
+          <line class="y-axis" y1="0" :y2="hh" />
+      </g>-->
       <!-- <g class="axis-labels">
-        <text class="axis-label" v-for="(a,i) in axisY" :key="i" x="0" :y="a.y">{{a.value}}</text>
-      </g> -->
+          <text class="axis-label" v-for="(a,i) in axisY" :key="i" x="0" :y="a.y">{{a.value}}</text>
+      </g>-->
       <g class="axis-labels">
-        <text class="axis-label" v-for="(a,i) in axisY" :key="i" :x="a.x" :y="a.y">{{a.value}}</text>
+        <text class="axis-label" v-for="a in axisY" :key="a.y" :x="a.y" :y="a.x">{{a.value}}</text>
       </g>
     </g>
     <g class="bars">
@@ -45,6 +31,7 @@
         :x="0"
         :y="barY(d) - 21"
         :style="barStyle(d)"
+        @mouseover.prevent="startMove($event,d)"
         @click="barClick($event,d)"
       />
       <!-- time -->
@@ -59,21 +46,45 @@
       <text v-for="(d,i) in bars" :key="i.percentX" class="names" :y="barY(d)" :x="-70">{{barN(d)}}</text>
     </g>
     <!-- <g class="dummies">
-        <rect
-          v-for="(d,i) in dummyBars"
-          :key="i"
-          class="dummy-bar"
-          :width="d.w"
-          :height="h"
-          :x="barX(d)"
-          y="0"
-          :class="(opts.bars) ? &quot;has-bars&quot;:&quot;&quot;"
-          @mouseover.prevent="startMove($event,d)"
-          @mouseleave="stopMove($event,d)"
-          @click="barClick($event,d)"
-          @touchstart="barClick($event,d)"
-        />
+          <rect
+            v-for="(d,i) in dummyBars"
+            :key="i"
+            class="dummy-bar"
+            :width="d.w"
+            :height="h"
+            :x="barX(d)"
+            y="0"
+            :class="(opts.bars) ? &quot;has-bars&quot;:&quot;&quot;"
+            @mouseover.prevent="startMove($event,d)"
+            @mouseleave="stopMove($event,d)"
+            @click="barClick($event,d)"
+            @touchstart="barClick($event,d)"
+          />
     </g>-->
+    <!-- <g class="chart-tip" v-if="opts.tip &amp;&amp; over">
+        <rect
+          class="chart-tip-back"
+          v-if="opts.tipBack"
+          :x="lineX + fontSize/2"
+          :y="0"
+          :width="labelW + &quot;ex&quot;"
+          :height="label.length + .25 + &quot;em&quot;"
+          :rx="labelW / 5"
+          :ry="label.lenght"
+          @touchstart="barClick(over)"
+        />
+        <text class="label" :x="lineX + fontSize" y="0" :font-size="fontSize" />
+        <tspan
+          class="label-line"
+          v-for="(line) in label"
+          :key="line.txt"
+          :x="lineX + fontSize"
+          dy="1.2em"
+          :class="line.css"
+          :style="line.style"
+        >{{line.txt}}</tspan>
+      </g>
+    <span>{{label}}</span>-->
   </svg>
 </template>
 <script>
@@ -235,8 +246,8 @@ export default {
 
       const scaleY = d3
         .scaleLinear()
-        .domain([0, ticks])
-        .rangeRound([this.hh, 0]);
+        .domain([ticks, 0])
+        .rangeRound([this.w, 0]);
 
       for (let i = 0; i <= ticks; i++) {
         const v = scaleV(i);
@@ -517,7 +528,7 @@ export default {
       // return (x > -1) ? x : 0
     },
     barY(d) {
-      const y = this.h - d.y - this.margin / 2
+      const y = this.h - d.y - this.margin / 2;
       return y;
       // return (y > -1) ? y : 0
     },
@@ -576,7 +587,7 @@ export default {
       return rnd;
     },
     barClick(event, bar) {
-      console.log(bar);
+      this.$emit("namePassed", bar.d.name);
       this.over = this.over === bar ? false : bar;
       this.$emit("barClick", { bar, event });
     },
@@ -584,7 +595,6 @@ export default {
 };
 </script>
 <style lang="stylus">
-
 .line {
   fill: none;
   stroke: steelblue;
@@ -620,6 +630,12 @@ export default {
   fill: cyan;
   opacity: 0.2;
   stroke: none;
+
+  &:hover {
+    opacity: 1;
+    transition: ease 0.2s;
+    cursor: pointer;
+  }
 }
 
 .dummy-bar {
@@ -652,6 +668,10 @@ export default {
 .axis {
   stroke-width: 1px;
   stroke: gray;
+}
+
+.axis-labels {
+  transform: translateY(390px);
 }
 
 .axis-label {
