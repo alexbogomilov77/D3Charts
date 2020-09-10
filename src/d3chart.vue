@@ -1,19 +1,18 @@
 <template>
-  <svg class="d3-bar-chart" :width="w" :height="h" v-if="ready">
+  <svg ref="chart" class="d3-bar-chart" :width="w" :height="h" v-if="ready">
     <!-- <g class="lines">
       <line class="line-y" v-for="a in axisY" :key="a.y" :y1="hh" :x1="a.y" :x2="a.y" />
       <g class="axis-labels">
         <text class="axis-label" v-for="a in axisY" :key="a.y" :x="a.y" :y="a.x">{{a.value}}</text>
       </g>
     </g> -->
-    <!-- <span>{{yScale}}</span> -->
     <g class="bars">
       <rect
-        v-for="(el,i) in calldata"
+        v-for="(d,i) in calldata"
         :key="i"
-        :width="xScale(el.duration)"
+        :width="xScale(d.duration)"
         :height="rectHeight"
-        :y="yScale(el.name)"
+        :y="yScale(d.name)"
       />
       <!-- time -->
       <!-- <text
@@ -34,8 +33,9 @@ import * as d3Select from "d3-selection";
 import * as d3array from "d3-array";
 import * as d3scale from "d3-scale";
 import * as d3Shape from "d3-shape";
+import * as d3Axis from "d3-axis";
 // import defaultOptions from "./defaultOptions";
-const d3 = Object.assign({}, d3Select, d3array, d3scale, d3Shape);
+const d3 = Object.assign({}, d3Select, d3array, d3scale, d3Shape, d3Axis);
 export default {
   name: "d3chart",
   props: {
@@ -50,6 +50,8 @@ export default {
       w: 800,
       h: 500,
       yScale: null,
+      xScale: null,
+      yAxis: null,
       rectHeight: null
     };
   },
@@ -146,7 +148,7 @@ export default {
     },
 
     axisY() {
-      let ticks = this.opts.axisTicks;
+      let ticks = 15;
       ticks = ticks <= this.max ? ticks : this.max;
       const axis = [];
 
@@ -314,19 +316,32 @@ export default {
   methods: {
     init () {
       this.yScale = d3.scaleBand().
-        domain([this.calldata.map((el => el.name))]).
+        domain(this.calldata.map(d => d.name)).
         range([0, this.h]);
-      
       this.rectHeight = this.yScale.bandwidth()
 
+      this.xScale = d3.scaleLinear().
+        domain([0, d3.max(this.calldata, d => d.duration)]).
+        range([0, this.w]);
+      
+      this.yAxis = d3.axisLeft(this.yScale)
+
       this.ready = true
+      // this.setLeftAxis()
     },
-    xScale() {
-      return 
-        d3.scaleLinear().
-        domain([0, d3.max(this.calldata, el.duration)]).
-        range([0, w]);
-    },
+    // setLeftAxis () {
+    //   let self = this
+    //   this.$nextTick(() => {
+    //     self.$refs.chart.append('g')
+    //     d3.call(self.d3.axisLeft(self.yScale))
+    //   })
+    // },
+    // xScale() {
+    //   return 
+    //     d3.scaleLinear().
+    //     domain([0, d3.max(this.calldata, el.duration)]).
+    //     range([0, w]);
+    // },
     curve(opts) {
       const data = this.bars;
       const barw = this.barW;
