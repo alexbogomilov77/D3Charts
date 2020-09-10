@@ -1,5 +1,5 @@
 <template>
-  <svg class="d3-bar-chart" :width="w" :height="h">
+  <svg class="d3-bar-chart" :width="w" :height="h" v-if="ready">
     <!-- <g class="lines">
       <line class="line-y" v-for="a in axisY" :key="a.y" :y1="hh" :x1="a.y" :x2="a.y" />
       <g class="axis-labels">
@@ -45,9 +45,12 @@ export default {
   },
   data() {
     return {
+      ready: false,
       activeBar: '',
       w: 800,
-      h: 500
+      h: 500,
+      yScale: null,
+      rectHeight: null
     };
   },
   created() {
@@ -55,6 +58,7 @@ export default {
   },
   mounted() {
     // this.onResize();
+    this.init()
   },
   watch: {
     // options(newValue) {
@@ -63,16 +67,6 @@ export default {
     // },
   },
   computed: {
-    rectHeight () {
-      return this.yScale.bandwidth()
-    },
-    yScale () {
-      return 
-        d3.scaleBand().
-        domain([this.calldata.map((el => el.name))]).
-        // domain(['Mon', 'Tue', 'Wed', 'Thu', 'Fri']).
-        range([0, this.h]);
-    },
     xMin() {
       return this.getX ? d3.min(this.xValues) : 0;
     },
@@ -318,10 +312,19 @@ export default {
     },
   },
   methods: {
+    init () {
+      this.yScale = d3.scaleBand().
+        domain([this.calldata.map((el => el.name))]).
+        range([0, this.h]);
+      
+      this.rectHeight = this.yScale.bandwidth()
+
+      this.ready = true
+    },
     xScale() {
       return 
         d3.scaleLinear().
-        domain([0, d3.max(this.calldata, el => el.duration)]).
+        domain([0, d3.max(this.calldata, el.duration)]).
         range([0, w]);
     },
     curve(opts) {
@@ -362,7 +365,7 @@ export default {
         return { style, css, txt, i };
       });
     },
-    init() {
+    xinit() {
       const opts = this.opts;
       const options = this.options;
 
