@@ -318,8 +318,9 @@ export default {
       this.yScale = d3
         .scaleBand()
         .domain(this.calldata.map((d) => d.name))
-        .range([0, this.h]);
-      this.rectHeight = this.yScale.bandwidth();
+        .range([0, this.h])
+        .padding(0.1)
+      this.rectHeight = this.yScale.bandwidth()
 
       this.xScale = d3
         .scaleLinear()
@@ -343,8 +344,11 @@ export default {
       this.$nextTick(() => {
         const svg = self.$refs.chart
         const svgElement = d3.select(svg)
-        const axisGenerator = d3.axisBottom(self.xScale)
-        svgElement.append("g").call(axisGenerator)
+        const axisGenerator = d3.axisBottom(self.xScale).tickSize(self.h)
+        const yAxisGenerator = d3.axisLeft(self.yScale)
+
+        svgElement.append("g").call(axisGenerator).attr('class', 'axis-bottom').selectAll('.domain').remove()
+        svgElement.append("g").call(yAxisGenerator).selectAll('.domain, .tick line').remove()
       })
 
     },
@@ -555,6 +559,10 @@ export default {
 };
 </script>
 <style lang="stylus">
+// .axis-bottom {
+//   transform: translateY(500px);
+// }
+
 .line {
   fill: none;
   stroke: steelblue;
@@ -634,9 +642,9 @@ export default {
   stroke: gray;
 }
 
-.axis-labels {
-  transform: translateY(390px);
-}
+// .axis-labels {
+//   transform: translate(0, 5000px);
+// }
 
 .axis-label {
   fill: gray;

@@ -95,7 +95,7 @@ export default {
 .charts {
   display: flex;
   flex: 1 1 100%;
-  max-width: 90%;
+  // max-width: 90%;
   flex-flow: row wrap;
   justify-content: center;
   margin: auto;
