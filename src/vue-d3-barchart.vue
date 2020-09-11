@@ -349,6 +349,7 @@ export default {
     },
     max() {
       const { max } = this.opts.domain;
+            console.log(d3.max(this.opts.domain))
       const { yValues } = this;
       return max === null || max === undefined ? d3.max(yValues) : max;
     },

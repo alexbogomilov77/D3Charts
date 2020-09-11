@@ -45,7 +45,7 @@ export default {
         },
         {
           "name": "Alex",
-          "duration": 106
+          "duration": 99
         },
         {
           "name": "Jeckie",
@@ -131,9 +131,9 @@ export default {
 }
 
 .bar-chart {
-  border: 1px solid $txt-color;
-  height: 400px;
-  width: 500px;
+  // border: 1px solid $txt-color;
+  // height: 400px;
+  // width: 500px;
   padding: 1em;
   box-shadow: 2px 2px 8px alpha($color, 0.2);
 }

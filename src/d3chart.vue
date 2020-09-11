@@ -5,7 +5,7 @@
       <g class="axis-labels">
         <text class="axis-label" v-for="a in axisY" :key="a.y" :x="a.y" :y="a.x">{{a.value}}</text>
       </g>
-    </g> -->
+    </g>-->
     <g class="bars">
       <rect
         v-for="(d,i) in calldata"
@@ -21,7 +21,7 @@
         class="label"
         :y="barY(d)"
         :x="barX(d) - 70"
-      >{{barM(d) + 'min'}}</text> -->
+      >{{barM(d) + 'min'}}</text>-->
       <!-- names -->
       <!-- <text v-for="(d,i) in bars" :key="i.percentX" class="names" :y="barY(d)" :x="-70">{{barN(d)}}</text> -->
     </g>
@@ -46,13 +46,13 @@ export default {
   data() {
     return {
       ready: false,
-      activeBar: '',
+      activeBar: "",
       w: 800,
       h: 500,
       yScale: null,
       xScale: null,
       yAxis: null,
-      rectHeight: null
+      rectHeight: null,
     };
   },
   created() {
@@ -60,7 +60,7 @@ export default {
   },
   mounted() {
     // this.onResize();
-    this.init()
+    this.init();
   },
   watch: {
     // options(newValue) {
@@ -314,30 +314,42 @@ export default {
     },
   },
   methods: {
-    init () {
-      this.yScale = d3.scaleBand().
-        domain(this.calldata.map(d => d.name)).
-        range([0, this.h]);
-      this.rectHeight = this.yScale.bandwidth()
+    init() {
+      this.yScale = d3
+        .scaleBand()
+        .domain(this.calldata.map((d) => d.name))
+        .range([0, this.h]);
+      this.rectHeight = this.yScale.bandwidth();
 
-      this.xScale = d3.scaleLinear().
-        domain([0, d3.max(this.calldata, d => d.duration)]).
-        range([0, this.w]);
+      this.xScale = d3
+        .scaleLinear()
+        .domain([0, d3.max(this.calldata, (d) => d.duration)])
+        .range([0, this.w]);
+
+      // this.yAxis = d3.axisLeft(this.yScale)
       
-      this.yAxis = d3.axisLeft(this.yScale)
-
-      this.ready = true
-      // this.setLeftAxis()
+      this.ready = true;
+      this.setLeftAxis();
     },
-    // setLeftAxis () {
-    //   let self = this
-    //   this.$nextTick(() => {
-    //     self.$refs.chart.append('g')
-    //     d3.call(self.d3.axisLeft(self.yScale))
-    //   })
-    // },
+    setLeftAxis() {
+      let self = this;
+
+      // this.$nextTick(() => {
+      //   const svg = self.$refs.chart.append("g");
+      //   console.log(self.yScale);
+      //   svg.d3.call(d3.axisLeft(self.yScale));
+      // });
+
+      this.$nextTick(() => {
+        const svg = self.$refs.chart
+        const svgElement = d3.select(svg)
+        const axisGenerator = d3.axisBottom(self.xScale)
+        svgElement.append("g").call(axisGenerator)
+      })
+
+    },
     // xScale() {
-    //   return 
+    //   return
     //     d3.scaleLinear().
     //     domain([0, d3.max(this.calldata, el.duration)]).
     //     range([0, w]);
@@ -534,7 +546,7 @@ export default {
       return rnd;
     },
     barClick(event, bar) {
-      this.activeBar = bar.d.name
+      this.activeBar = bar.d.name;
       this.$emit("namePassed", bar.d.name);
       this.over = this.over === bar ? false : bar;
       this.$emit("barClick", { bar, event });
@@ -584,6 +596,7 @@ export default {
     transition: ease 0.2s;
     cursor: pointer;
   }
+
   &.active {
     opacity: 1;
   }
