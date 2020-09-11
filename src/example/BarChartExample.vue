@@ -1,16 +1,19 @@
 <template>
   <div class="example">
-    <div class="charts">
-      <div class="chart" v-for="(chart, i) in charts" :key="i">
-        <div class="title">{{ activeName }}</div>
-        <div class="bar-chart">
-          <d3chart
-            v-if="savedData"
-            :calldata="savedData"
-            @namePassed="namePassed($event)">
-          </d3chart>
-        </div>
-      </div>
+    <div class="header">
+      <span class="name">
+        {{ activeName || 'Name' }}
+      </span>
+      <span class="label">
+        Engagement Overall
+      </span>
+    </div>
+    <div class="bar-chart">
+      <d3chart
+        v-if="savedData"
+        :calldata="savedData"
+        @namePassed="namePassed($event)">
+      </d3chart>
     </div>
   </div>
 </template>
@@ -33,15 +36,15 @@ export default {
       savedData: [
         {
           "name": "Shelley",
-          "duration": 36
+          "duration": 76
         },
         {
           "name": "Hardy",
-          "duration": 16
+          "duration": 36
         },
         {
           "name": "Ahmet",
-          "duration": 20
+          "duration": 51
         },
         {
           "name": "Alex",
@@ -49,27 +52,7 @@ export default {
         },
         {
           "name": "Jeckie",
-          "duration": 80
-        },
-        {
-          "name": "Tom",
-          "duration": 50
-        },
-        {
-          "name": "Wetz",
-          "duration": 39
-        },
-        {
-          "name": "Butler",
-          "duration": 33
-        },
-        {
-          "name": "Scott",
-          "duration": 77
-        },
-        {
-          "name": "Katranci",
-          "duration": 40
+          "duration": 30
         }
       ],
       copyIcon,
@@ -87,54 +70,27 @@ export default {
 <style lang="stylus">
 @import '../vars.styl';
 
-.example {
-  display: flex;
-  max-width: 100%;
-}
-
-.charts {
-  display: flex;
-  flex: 1 1 100%;
-  // max-width: 90%;
-  flex-flow: row wrap;
-  justify-content: center;
-  margin: auto;
-}
-
-.title {
-  display: flex;
-  flex: 1;
-  margin: 0.5em 0em;
-}
-
-.chart {
-  display: flex;
-  flex-flow: column wrap;
-  margin: 1em;
-  align-self: flex-start;
-
-  textarea {
-    font-size: 0.5em;
-    margin-top: 0.5em;
-    resize: vertical;
+.header {
+  padding: 1vw 0 1vw 20px;
+  min-height: 40px;
+  .name {
+    font-size: 24px;
+    display: block;
+    font-weight: bold;
   }
-
-  button {
-    width: auto !important;
-    flex: 1;
-    display: flex;
-    background: none;
-    margin: 0;
-    padding: 0;
-    align-self: flex-end;
+  .label {
+    font-size: 14px;
   }
 }
 
 .bar-chart {
-  // border: 1px solid $txt-color;
-  // height: 400px;
-  // width: 500px;
-  padding: 1em;
+    padding: 30px 0;
+    background: #f0f0f0;
+  }
+
+.example {
+  border-radius: 10px;
+  // padding: 1em;
   box-shadow: 2px 2px 8px alpha($color, 0.2);
 }
 </style>

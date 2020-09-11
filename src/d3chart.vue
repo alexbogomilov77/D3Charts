@@ -7,6 +7,12 @@
         <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
       </filter>
     </defs> -->
+    <defs>
+      <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" style="stop-color:rgb(177, 205, 195);stop-opacity:1" />
+        <stop offset="100%" style="stop-color:rgb(135, 170, 157);stop-opacity:1" />
+      </linearGradient>
+    </defs>
     <g class="bars">
       <rect
         v-for="(d,i) in calldata"
@@ -14,6 +20,7 @@
         :width="xScale(d.duration)"
         :height="rectHeight"
         :y="yScale(d.name)"
+        fill="url(#grad1)"
         @click="handleBarClick($event,d)"
         :class="['bar', {active: d.name === activeBarName}]"
       />
@@ -22,18 +29,24 @@
           v-if="activeBarName"
           :width="160"
           :height="35"
-          :y="yScale(activeBarName) - 30"
+          :y="yScale(activeBarName) - 40"
           :x="xScale(activeBarDur) - 160"
           class="tooltip"
         >
         </rect>
         <text
           v-if="activeBarName"
-          :y="yScale(activeBarName) - 5"
+          :y="yScale(activeBarName) - 25"
           :x="xScale(activeBarDur) - 145"
           class="tip-label">
           {{activeBarDur + 'min'}}
-          {{'Team Average:' + avgMins}}
+        </text>
+        <text
+          v-if="activeBarName"
+          :y="yScale(activeBarName) - 5"
+          :x="xScale(activeBarDur) - 145"
+          class="tip-label">
+          {{'Team Average: ' + avgMins + 'min'}}
         </text>
       </g>
       <!-- time -->
@@ -47,11 +60,11 @@
       {{d.duration + 'min'}}
       </text>
       <!-- team average y line -->
-      <line :x1="xScale(avgMins)" :y1="h" :x2="xScale(avgMins)" :y2="0" stroke="#ffc500" stroke-width="2" stroke-dasharray="10 5" />
+      <line :x1="xScale(avgMins)" :y1="h" :x2="xScale(avgMins)" :y2="0" stroke="#deaf47" stroke-width="2" stroke-dasharray="10 5" />
       <!-- team average x line -->
-      <line :x1="xScale(avgMins)" :y1="yScale(activeBarName)" :x2="0" :y2="yScale(activeBarName)" stroke="#ffc500" stroke-width="3" />
+      <line :x1="xScale(avgMins)" :y1="yScale(activeBarName)" :x2="0" :y2="yScale(activeBarName)" stroke="#deaf47" stroke-width="3" />
       <!-- team average y line point -->
-      <circle :cx="xScale(avgMins)" :cy="0" r="8" stroke="white" stroke-width="3" fill="#ffc500" />
+      <circle :cx="xScale(avgMins)" :cy="0" r="8" stroke="white" stroke-width="3" fill="#deaf47" />
     </g>
   </svg>
 </template>
@@ -77,7 +90,7 @@ export default {
       activeBarDur: "",
       activeBarName: "",
       avgMins: null,
-      w: 800,
+      w: 600,
       h: 500,
       yScale: null,
       xScale: null,
@@ -95,16 +108,6 @@ export default {
   //   }
   // },
   computed: {
-    // renderGradient() {
-    //   const curve = this.opts.curve;
-    //   const bars = this.opts.bars;
-    //   const curveBack = this.opts.curveBack;
-    //   return (
-    //     (bars && bars.gradient) ||
-    //     (curve && curve.gradient) ||
-    //     (curveBack && curveBack.gradient)
-    //   );
-    // },
     margin() {
       return this.opts.margin || this.h / 10;
       // return this.fontSize * 2
@@ -116,7 +119,7 @@ export default {
         .scaleBand()
         .domain(this.calldata.map((d) => d.name))
         .range([0, this.h])
-        .padding(0.1)
+        .padding(0.5)
       this.rectHeight = this.yScale.bandwidth()
 
       this.xScale = d3
@@ -128,16 +131,6 @@ export default {
       this.ready = true;
       this.setXYAxis();
     },
-    calcAverage () {
-        let nums = this.calldata
-        let totalSum = 0;
-        for (let i in nums) {
-            totalSum += nums[i].duration;
-        }
-        let numsCnt = nums.length;
-        let average = totalSum / numsCnt;
-        return average
-    },
     setXYAxis() {
       let self = this;
 
@@ -148,9 +141,31 @@ export default {
         const yAxisGenerator = d3.axisLeft(self.yScale)
 
         svgElement.append("g").call(xAxisGenerator).attr('class', 'axis-bottom').selectAll('.domain').remove()
-        svgElement.append("g").call(yAxisGenerator).selectAll('.domain, .tick line').remove()
+        svgElement.append("g").call(yAxisGenerator).attr('class', 'axis-left').selectAll('.domain, .tick line').remove()
+        self.putImages()
       })
-
+    },
+    putImages () {
+      const url = "https://mk0trickyphotos51tq5.kinstacdn.com/wp-content/uploads/2017/08/final-1.png"
+      const svgElement = d3.select(this.$refs.chart)
+      const axis = svgElement.select('.axis-left')
+      axis.selectAll(".tick")
+        .append("svg:image")
+        .attr("xlink:href", url)
+        .attr("width", 40)
+        .attr("height", 40)
+        .attr("x", -120)
+        .attr("y", -20);
+    },
+    calcAverage () {
+      let nums = this.calldata
+      let totalSum = 0;
+      for (let i in nums) {
+          totalSum += nums[i].duration;
+      }
+      let numsCnt = nums.length;
+      let average = totalSum / numsCnt;
+      return average
     },
     handleBarClick(event, bar) {
       this.activeBarDur = bar.duration
@@ -169,24 +184,7 @@ export default {
       // review autosize
       this.w = w > 0 ? w : this.opts.autoSize.w;
       this.h = h > 0 ? h : this.opts.autoSize.h;
-    },
-    // gradientStyle(name) {
-    //   let style = {};
-    //   const e = this.opts[name];
-    //   if (e) {
-    //     style = e.style || {};
-    //     const strokeUrl = "url(#" + this.gradientId + ")";
-    //     if (e.gradient) {
-    //       if (e.gradient.stroke) {
-    //         style.stroke = strokeUrl;
-    //       }
-    //       if (e.gradient.fill) {
-    //         style.fill = strokeUrl;
-    //       }
-    //     }
-    //   }
-    //   return style;
-    // }
+    }
   }
 };
 </script>
@@ -205,11 +203,24 @@ export default {
   max-height: 100%;
   max-width: 100%;
   overflow: visible;
-  background: #e0e0e0;
+  background: #f0f0f0;
+  margin: 0 20px 0 140px;
+}
+
+.axis-left {
+  .tick {
+    font-size: 18px;
+  }
+}
+
+.axis-bottom {
+  line {
+    stroke: #b7b7b7;
+  }
 }
 
 .bar {
-  fill: #92b9a5;
+  // fill: #92b9a5;
   opacity: 0.2;
   stroke: none;
   transition: 0.1s;
