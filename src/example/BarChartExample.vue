@@ -57,7 +57,7 @@ export default {
         },
         {
           "name": "Wetz",
-          "duration": 3
+          "duration": 39
         },
         {
           "name": "Butler",

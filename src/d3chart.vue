@@ -1,11 +1,12 @@
 <template>
   <svg ref="chart" class="d3-bar-chart" :width="w" :height="h" v-if="ready">
-    <!-- <g class="lines">
-      <line class="line-y" v-for="a in axisY" :key="a.y" :y1="hh" :x1="a.y" :x2="a.y" />
-      <g class="axis-labels">
-        <text class="axis-label" v-for="a in axisY" :key="a.y" :x="a.y" :y="a.x">{{a.value}}</text>
-      </g>
-    </g>-->
+    <!-- <defs>
+      <filter id="f1" x="0" y="0" width="200%" height="200%">
+        <feOffset result="offOut" in="SourceGraphic" dx="20" dy="20" />
+        <feGaussianBlur result="blurOut" in="offOut" stdDeviation="10" />
+        <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+      </filter>
+    </defs> -->
     <g class="bars">
       <rect
         v-for="(d,i) in calldata"
@@ -13,17 +14,25 @@
         :width="xScale(d.duration)"
         :height="rectHeight"
         :y="yScale(d.name)"
+        @click="handleBarClick($event,d)"
+        :class="['bar', {active: d.name === activeBarName}]"
       />
       <!-- time -->
-      <!-- <text
-        v-for="(d,i) in bars"
-        :key="i.percentX"
+      <text
+        v-for="d in calldata"
+        :key="d.name"
         class="label"
-        :y="barY(d)"
-        :x="barX(d) - 70"
-      >{{barM(d) + 'min'}}</text>-->
-      <!-- names -->
-      <!-- <text v-for="(d,i) in bars" :key="i.percentX" class="names" :y="barY(d)" :x="-70">{{barN(d)}}</text> -->
+        :y="yScale(d.name) + rectHeight / 2 + 5"
+        :x="xScale(d.duration) - 50"
+      >
+      {{d.duration + 'min'}}
+      </text>
+      <!-- team average y line -->
+      <line :x1="xScale(avgMins)" :y1="h" :x2="xScale(avgMins)" :y2="0" stroke="#ffc500" stroke-width="2" stroke-dasharray="10 5" />
+      <!-- team average x line -->
+      <line :x1="xScale(avgMins)" :y1="yScale(activeBarName)" :x2="0" :y2="yScale(activeBarName)" stroke="#ffc500" stroke-width="3" />
+      <!-- team average y line point -->
+      <circle :cx="xScale(avgMins)" :cy="0" r="8" stroke="white" stroke-width="3" fill="#ffc500" />
     </g>
   </svg>
 </template>
@@ -46,7 +55,9 @@ export default {
   data() {
     return {
       ready: false,
-      activeBar: "",
+      activeBarDur: "",
+      activeBarName: "",
+      avgMins: null,
       w: 800,
       h: 500,
       yScale: null,
@@ -326,31 +337,39 @@ export default {
         .scaleLinear()
         .domain([0, d3.max(this.calldata, (d) => d.duration)])
         .range([0, this.w]);
+      this.avgMins = this.calcAverage()
 
-      // this.yAxis = d3.axisLeft(this.yScale)
-      
       this.ready = true;
-      this.setLeftAxis();
+      this.setXYAxis();
     },
-    setLeftAxis() {
+    calcAverage () {
+        let nums = this.calldata
+        let totalSum = 0;
+        for (let i in nums) {
+            totalSum += nums[i].duration;
+        }
+        let numsCnt = nums.length;
+        let average = totalSum / numsCnt;
+        return average
+    },
+    setXYAxis() {
       let self = this;
-
-      // this.$nextTick(() => {
-      //   const svg = self.$refs.chart.append("g");
-      //   console.log(self.yScale);
-      //   svg.d3.call(d3.axisLeft(self.yScale));
-      // });
 
       this.$nextTick(() => {
         const svg = self.$refs.chart
         const svgElement = d3.select(svg)
-        const axisGenerator = d3.axisBottom(self.xScale).tickSize(self.h)
+        const xAxisGenerator = d3.axisBottom(self.xScale).tickSize(self.h)
         const yAxisGenerator = d3.axisLeft(self.yScale)
 
-        svgElement.append("g").call(axisGenerator).attr('class', 'axis-bottom').selectAll('.domain').remove()
+        svgElement.append("g").call(xAxisGenerator).attr('class', 'axis-bottom').selectAll('.domain').remove()
         svgElement.append("g").call(yAxisGenerator).selectAll('.domain, .tick line').remove()
       })
 
+    },
+    handleBarClick(event, bar) {
+      this.activeBarDur = bar.duration
+      this.activeBarName = bar.name
+      this.$emit("namePassed", bar.name);
     },
     // xScale() {
     //   return
@@ -582,6 +601,7 @@ export default {
 .label {
   font-size: 12px;
   fill: white;
+  font-weight: bold;
 }
 
 .names {
@@ -592,10 +612,11 @@ export default {
   max-height: 100%;
   max-width: 100%;
   overflow: visible;
+  background: #e0e0e0;
 }
 
 .bar {
-  fill: cyan;
+  fill: #92b9a5;
   opacity: 0.2;
   stroke: none;
 
