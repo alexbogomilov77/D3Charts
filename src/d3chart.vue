@@ -13,17 +13,41 @@
         <stop offset="100%" style="stop-color:rgb(135, 170, 157);stop-opacity:1" />
       </linearGradient>
     </defs>
+    <!-- <template v-if="ticks.length > 0">
+      <line :y1="h" :y2="0" stroke="red" />
+      <g v-for="(tick, i) in ticks" :key="i">
+        <text
+          :style="`transform: translate(0, ${tick.yOffset}px)`">
+          {{ tick.value }}
+        </text>
+      </g>
+    </template> -->
     <g class="bars">
-      <rect
+      <g
         v-for="(d,i) in calldata"
         :key="i"
-        :width="xScale(d.duration)"
-        :height="rectHeight"
-        :y="yScale(d.name)"
-        fill="url(#grad1)"
-        @click="handleBarClick($event,d)"
-        :class="['bar', {active: d.name === activeBarName}]"
-      />
+        class="bar-group"
+      >
+        <text
+          :style="`transform: translate(-80px, ${d.yOffset}px)`">
+          {{ d.name }}
+        </text>
+        <image
+          width="50"
+          height="50"
+          :xlink:href="`${d.photo}`"
+          :style="`transform: translate(-80px, ${d.yOffset}px)`"
+        />
+        <rect
+          :width="xScale(d.duration)"
+          :height="rectHeight"
+          :y="yScale(d.name)"
+          fill="url(#grad1)"
+          @click="handleBarClick($event,d)"
+          :class="['bar', {active: d.name === activeBarName}]"
+        />
+      </g>
+      <!-- tooltip -->
       <g>
         <rect
           v-if="activeBarName"
@@ -49,6 +73,7 @@
           {{'Team Average: ' + avgMins + 'min'}}
         </text>
       </g>
+      <!-- tooltip -->
       <!-- time -->
       <text
         v-for="d in calldata"
@@ -59,6 +84,7 @@
       >
       {{d.duration + 'min'}}
       </text>
+      <!-- time -->
       <!-- team average y line -->
       <line :x1="xScale(avgMins)" :y1="h" :x2="xScale(avgMins)" :y2="0" stroke="#deaf47" stroke-width="2" stroke-dasharray="10 5" />
       <!-- team average x line -->
@@ -86,6 +112,7 @@ export default {
   },
   data() {
     return {
+      ticks: [],
       ready: false,
       activeBarDur: "",
       activeBarName: "",
@@ -115,12 +142,43 @@ export default {
   },
   methods: {
     init() {
+      const bandWithY = d3
+        .scaleBand()
+        .domain(this.calldata.map((d) => d.name))
+        .range([0, this.h])
+        .padding(0.5)
+
+      const yAxis = d3
+        .scaleLinear()
+        .domain([0, d3.max(this.calldata.map((d) => d.duration))])
+        .range([0, this.h]);
+        
+      // this.ticks = yAxis.ticks(5)
+      //     .map(value => ({
+      //       value,
+      //       photo: "url",
+      //       yOffset: yAxis(value)
+      //     }))
+
+      this.ticks = yAxis.ticks(5).map(value => ({ yOffset: yAxis(value) + 45 }))
+
+      for (let i = 0; i < this.calldata.length; i++) {
+        this.calldata[i] = {...this.calldata[i], ...this.ticks[i]};
+        // this.ticks[]
+        // for (let j = 0; j < this.ticks.length; j++) {
+        //   this.calldata[i] = {...this.calldata[i], ...this.ticks[i]};
+        //   console.log(this.calldata[i])
+        // }
+        console.log(this.calldata[i])
+      }
+            
       this.yScale = d3
         .scaleBand()
         .domain(this.calldata.map((d) => d.name))
         .range([0, this.h])
         .padding(0.5)
-      this.rectHeight = this.yScale.bandwidth()
+      // height of rectangle bars
+      this.rectHeight = bandWithY.bandwidth()
 
       this.xScale = d3
         .scaleLinear()
@@ -138,11 +196,11 @@ export default {
         const svg = self.$refs.chart
         const svgElement = d3.select(svg)
         const xAxisGenerator = d3.axisBottom(self.xScale).tickSize(self.h)
-        const yAxisGenerator = d3.axisLeft(self.yScale)
+        // const yAxisGenerator = d3.axisLeft(self.yScale)
 
         svgElement.append("g").call(xAxisGenerator).attr('class', 'axis-bottom').selectAll('.domain').remove()
-        svgElement.append("g").call(yAxisGenerator).attr('class', 'axis-left').selectAll('.domain, .tick line').remove()
-        self.putImages()
+        // svgElement.append("g").call(yAxisGenerator).attr('class', 'axis-left').selectAll('.domain, .tick line').remove()
+        // self.putImages()
       })
     },
     putImages () {
@@ -170,7 +228,7 @@ export default {
     handleBarClick(event, bar) {
       this.activeBarDur = bar.duration
       this.activeBarName = bar.name
-      this.$emit("namePassed", bar.name);
+      this.$emit("namePassed", bar);
     },
     onResize() {
       let w, h;
