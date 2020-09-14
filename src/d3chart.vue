@@ -13,15 +13,9 @@
         <stop offset="100%" style="stop-color:rgb(135, 170, 157);stop-opacity:1" />
       </linearGradient>
     </defs>
-    <!-- <template v-if="ticks.length > 0">
-      <line :y1="h" :y2="0" stroke="red" />
-      <g v-for="(tick, i) in ticks" :key="i">
-        <text
-          :style="`transform: translate(0, ${tick.yOffset}px)`">
-          {{ tick.value }}
-        </text>
-      </g>
-    </template> -->
+    <clipPath id="clipCircle">
+      <circle r="25" cx="25" cy="25"/>
+    </clipPath>
     <g class="bars">
       <g
         v-for="(d,i) in calldata"
@@ -29,48 +23,62 @@
         class="bar-group"
       >
         <text
-          :style="`transform: translate(-80px, ${d.yOffset}px)`">
+          :class="['name', {active: d.name === activeBarName}]"
+          :style="`transform: translate(${- mdSpace / 2}px, ${d.yOffset + rectHeight / 2}px)`">
           {{ d.name }}
         </text>
+        <circle
+          r="27"
+          cx="27"
+          cy="27"
+          fill="rgb(135, 170, 157)"
+          :style="`transform: translate(${- mdSpace - 2}px, ${d.yOffset - xsSpace - 2}px)`"
+        />
         <image
           width="50"
           height="50"
           :xlink:href="`${d.photo}`"
-          :style="`transform: translate(-80px, ${d.yOffset}px)`"
+          clip-path="url(#clipCircle)"
+          :style="`transform: translate(${- mdSpace}px, ${d.yOffset - xsSpace}px)`"
         />
         <rect
           :width="xScale(d.duration)"
           :height="rectHeight"
           :y="yScale(d.name)"
           fill="url(#grad1)"
-          @click="handleBarClick($event,d)"
+          @click="handleBarClick(d)"
           :class="['bar', {active: d.name === activeBarName}]"
         />
       </g>
       <!-- tooltip -->
-      <g>
+      <g v-if="activeBarName">
         <rect
-          v-if="activeBarName"
-          :width="160"
-          :height="35"
-          :y="yScale(activeBarName) - 40"
+          :width="190"
+          :height="70"
+          ry="3"
+          rx="3"
+          :y="yScale(activeBarName) - 75"
           :x="xScale(activeBarDur) - 160"
           class="tooltip"
         >
         </rect>
         <text
-          v-if="activeBarName"
-          :y="yScale(activeBarName) - 25"
-          :x="xScale(activeBarDur) - 145"
-          class="tip-label">
+          :y="yScale(activeBarName) - 45"
+          :x="xScale(activeBarDur) - 95"
+          class="tooltip-minutes">
           {{activeBarDur + 'min'}}
         </text>
         <text
-          v-if="activeBarName"
-          :y="yScale(activeBarName) - 5"
-          :x="xScale(activeBarDur) - 145"
-          class="tip-label">
-          {{'Team Average: ' + avgMins + 'min'}}
+          :y="yScale(activeBarName) - 20"
+          :x="xScale(activeBarDur) - 140"
+          class="tooltip-average-minutes-label">
+          Team Average
+        </text>
+        <text
+          :y="yScale(activeBarName) - 20"
+          :x="xScale(activeBarDur) - 40"
+          class="tooltip-average-minutes">
+          {{avgMins + 'min'}}
         </text>
       </g>
       <!-- tooltip -->
@@ -79,7 +87,7 @@
         v-for="d in calldata"
         :key="d.name"
         :class="['label', {hide: d.name === activeBarName}]"
-        :y="yScale(d.name) + rectHeight / 2 + 5"
+        :y="yScale(d.name) + rectHeight / 2 + xsSpace"
         :x="xScale(d.duration) - 50"
       >
       {{d.duration + 'min'}}
@@ -123,22 +131,12 @@ export default {
       xScale: null,
       yAxis: null,
       rectHeight: null,
+      xsSpace: 5,
+      mdSpace: 150
     };
   },
   mounted() {
-    // this.onResize();
-    this.init();
-  },
-  // watch: {
-  //   options(newValue) {
-  //     this.onResize();
-  //   }
-  // },
-  computed: {
-    margin() {
-      return this.opts.margin || this.h / 10;
-      // return this.fontSize * 2
-    }
+    this.init()
   },
   methods: {
     init() {
@@ -152,42 +150,29 @@ export default {
         .scaleLinear()
         .domain([0, d3.max(this.calldata.map((d) => d.duration))])
         .range([0, this.h]);
-        
-      // this.ticks = yAxis.ticks(5)
-      //     .map(value => ({
-      //       value,
-      //       photo: "url",
-      //       yOffset: yAxis(value)
-      //     }))
 
-      this.ticks = yAxis.ticks(5).map(value => ({ yOffset: yAxis(value) + 45 }))
+      this.ticks = yAxis.ticks(5).map(value => ({ yOffset: yAxis(value) }))
 
       for (let i = 0; i < this.calldata.length; i++) {
-        this.calldata[i] = {...this.calldata[i], ...this.ticks[i]};
-        // this.ticks[]
-        // for (let j = 0; j < this.ticks.length; j++) {
-        //   this.calldata[i] = {...this.calldata[i], ...this.ticks[i]};
-        //   console.log(this.calldata[i])
-        // }
-        console.log(this.calldata[i])
+        this.calldata[i] = {...this.calldata[i], ...this.ticks[i]}
       }
             
       this.yScale = d3
         .scaleBand()
         .domain(this.calldata.map((d) => d.name))
         .range([0, this.h])
-        .padding(0.5)
       // height of rectangle bars
       this.rectHeight = bandWithY.bandwidth()
 
       this.xScale = d3
         .scaleLinear()
         .domain([0, d3.max(this.calldata, (d) => d.duration)])
-        .range([0, this.w]);
+        .range([0, this.w])
       this.avgMins = this.calcAverage()
 
-      this.ready = true;
-      this.setXYAxis();
+      this.ready = true
+      this.setXYAxis()
+      this.handleBarClick(this.calldata[2])
     },
     setXYAxis() {
       let self = this;
@@ -196,24 +181,9 @@ export default {
         const svg = self.$refs.chart
         const svgElement = d3.select(svg)
         const xAxisGenerator = d3.axisBottom(self.xScale).tickSize(self.h)
-        // const yAxisGenerator = d3.axisLeft(self.yScale)
 
         svgElement.append("g").call(xAxisGenerator).attr('class', 'axis-bottom').selectAll('.domain').remove()
-        // svgElement.append("g").call(yAxisGenerator).attr('class', 'axis-left').selectAll('.domain, .tick line').remove()
-        // self.putImages()
       })
-    },
-    putImages () {
-      const url = "https://mk0trickyphotos51tq5.kinstacdn.com/wp-content/uploads/2017/08/final-1.png"
-      const svgElement = d3.select(this.$refs.chart)
-      const axis = svgElement.select('.axis-left')
-      axis.selectAll(".tick")
-        .append("svg:image")
-        .attr("xlink:href", url)
-        .attr("width", 40)
-        .attr("height", 40)
-        .attr("x", -120)
-        .attr("y", -20);
     },
     calcAverage () {
       let nums = this.calldata
@@ -225,23 +195,10 @@ export default {
       let average = totalSum / numsCnt;
       return average
     },
-    handleBarClick(event, bar) {
+    handleBarClick(bar) {
       this.activeBarDur = bar.duration
       this.activeBarName = bar.name
       this.$emit("namePassed", bar);
-    },
-    onResize() {
-      let w, h;
-      if (!this.options.size) {
-        w = this.$el.clientWidth;
-        h = this.$el.clientHeight;
-      } else {
-        w = this.options.size.w;
-        h = this.options.size.h;
-      }
-      // review autosize
-      this.w = w > 0 ? w : this.opts.autoSize.w;
-      this.h = h > 0 ? h : this.opts.autoSize.h;
     }
   }
 };
@@ -262,7 +219,7 @@ export default {
   max-width: 100%;
   overflow: visible;
   background: #f0f0f0;
-  margin: 0 20px 0 140px;
+  margin: 0 20px 0 200px;
 }
 
 .axis-left {
@@ -290,10 +247,14 @@ export default {
     transition: ease 0.2s;
     cursor: pointer;
   }
+}
 
-  &.active {
-    opacity: 1;
-  }
+.name {
+  opacity: 0.2;
+}
+
+.active {
+  opacity: 1;
 }
 
 .hide {
@@ -304,9 +265,22 @@ export default {
   fill: white;
 }
 
-.tip-label {
-  font-size: 12px;
-  fill: black
+.tooltip-minutes {
+  font-size: 22px
+  font-weight: bold
+  fill: #656565
+}
+
+.tooltip-average-minutes {
+  font-size: 14px
+  font-weight: bold
+  fill: #deaf47
+}
+
+.tooltip-average-minutes-label {
+  font-size: 14px
+  font-weight: bold
+  fill: #c5c5c5
 }
 
 .line {

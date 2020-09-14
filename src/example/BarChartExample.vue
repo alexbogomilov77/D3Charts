@@ -2,7 +2,7 @@
   <div class="example">
     <div class="header">
       <img class="activePhoto" :src="`${this.activePhoto}`">
-      <span class="name">
+      <span class="active-name">
         {{ activeName || 'Name' }}
       </span>
       <span class="label">
@@ -81,7 +81,7 @@ export default {
 .header {
   padding: 1vw 0 1vw 20px;
   min-height: 40px;
-  .name {
+  .active-name {
     font-size: 24px;
     display: block;
     font-weight: bold;
@@ -98,12 +98,12 @@ export default {
 
 .activePhoto {
   width: 50px;
-  height 50px;  
+  height 50px;
+  border-radius: 50px;
 }
 
 .example {
   border-radius: 10px;
-  // padding: 1em;
   box-shadow: 2px 2px 8px alpha($color, 0.2);
 }
 </style>
