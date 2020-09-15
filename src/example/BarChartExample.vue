@@ -90,14 +90,15 @@ export default {
 
 .wrapper {
   border-radius: 10px;
-  box-shadow: 2px 2px 8px alpha(rgb(135, 170, 157), 0.2);
+  box-shadow: 10px 20px 35px #dadadae6, -20px -20px 60px #fff;
 }
 
 .header {
   display: flex
   padding: 1vw 1.2vw 1vw 1.2vw
   justify-content: space-between
-  background: linear-gradient(90deg, #f9f9f9, #fff);
+  border-radius: 25px 25px 0px 0;
+  background: linear-gradient(90deg, #f0f0f0, #fefefe);
   min-height: 40px
   .active-name {
     font-size: 24px;
