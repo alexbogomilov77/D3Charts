@@ -16,6 +16,7 @@
     <clipPath id="clipCircle">
       <circle r="25" cx="25" cy="25"/>
     </clipPath>
+    <text :x="xScale(avgMins) - 45" :y="-20" fill="#e0c998">Team Average</text>
     <g class="bars">
       <g
         v-for="(d,i) in calldata"
@@ -93,13 +94,10 @@
       {{d.duration + 'min'}}
       </text>
       <!-- time -->
-      <!-- team average y line -->
+      <!-- team average -->
       <line :x1="xScale(avgMins)" :y1="h" :x2="xScale(avgMins)" :y2="0" stroke="#deaf47" stroke-width="2" stroke-dasharray="10 5" />
-      <!-- team average x line -->
       <line :x1="xScale(avgMins)" :y1="yScale(activeBarName)" :x2="0" :y2="yScale(activeBarName)" stroke="#deaf47" stroke-width="3" />
-      <!-- team average y line point -->
       <circle :cx="xScale(avgMins)" :cy="0" r="8" stroke="white" stroke-width="3" fill="#deaf47" />
-      <text :x="xScale(avgMins) - 45" :y="-20" fill="#e0c998">Team Average</text>
     </g>
   </svg>
 </template>
