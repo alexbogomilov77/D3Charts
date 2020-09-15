@@ -83,7 +83,7 @@
       <text
         v-for="d in calldata"
         :key="d.name"
-        :class="['label', {hide: d.name === activeBarName}]"
+        :class="['time-label', {hide: d.name === activeBarName}]"
         :y="yScale(d.name) + rectHeight / 2 + xsSpace"
         :x="xScale(d.duration) - 50"
       >
@@ -212,7 +212,6 @@ export default {
     font-size: 18px;
   }
 }
-
 .axis-bottom {
   line {
     stroke: #b7b7b7;
@@ -224,7 +223,6 @@ export default {
   stroke: none;
   transition: 0.1s;
   transition-duration: 0.1s;
-
   &:hover {
     opacity: 1;
     transition: ease 0.2s;
@@ -232,7 +230,7 @@ export default {
   }
 }
 
-.label {
+.time-label {
   font-size: 12px;
   fill: white;
   font-weight: bold;
@@ -246,7 +244,6 @@ export default {
 .active {
   opacity: 1;
 }
-
 .hide {
   display: none;
 }
@@ -254,27 +251,19 @@ export default {
 .tooltip {
   fill: white;
 }
-
 .tooltip-minutes {
   font-size: 20px
   font-weight: bold
   fill: #656565
 }
-
 .tooltip-average-minutes {
   font-size: 12px
   font-weight: bold
   fill: #deaf47
 }
-
 .tooltip-average-minutes-label {
   font-size: 12px
   font-weight: bold
   fill: #c5c5c5
-}
-
-.line {
-  stroke: alpha(black, 0.5);
-  stroke-width: 2px;
 }
 </style>

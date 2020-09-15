@@ -2,7 +2,7 @@
   <div class="wrapper">
     <div class="header">
       <div class="profile">
-        <img class="activePhoto" :src="`${this.activePhoto}`">
+        <img class="active-photo" :src="`${this.activePhoto}`">
         <div class="profile-details">
           <span class="active-name">
             {{ activeName || 'Name' }}
@@ -26,10 +26,9 @@
 <script>
 /* eslint-disable */
 import chart from "./chart.vue";
-import calldata from "@/calldata.json";
 
 export default {
-  name: "bar-chart-example",
+  name: "bar-chart",
   components: {
     chart,
   },
@@ -75,15 +74,14 @@ export default {
 };
 </script>
 <style lang="stylus">
-#app, .row
-  display flex
-  justify-content center
-  align-items center
-
 #app
   user-select none
   flex-flow column wrap
   min-height 100vh
+#app, .row
+  display flex
+  justify-content center
+  align-items center
 
 .wrapper {
   border-radius: 10px;
@@ -97,14 +95,15 @@ export default {
   border-radius: 25px 25px 0px 0;
   background: linear-gradient(90deg, #f0f0f0, #fefefe);
   min-height: 40px
-  .active-name {
-    font-size: 24px;
-    display: block;
-    font-weight: bold;
-  }
-  .label {
-    font-size: 14px;
-  }
+}
+
+.active-name {
+  font-size: 24px;
+  display: block;
+  font-weight: bold;
+}
+.label {
+  font-size: 14px;
 }
 
 .profile {
@@ -134,7 +133,7 @@ export default {
   border-radius: 0 0 10px 10px;
 }
 
-.activePhoto {
+.active-photo {
   width: 50px;
   height 50px;
   border-radius: 50px;
