@@ -30,7 +30,7 @@ import chart from "./chart.vue";
 export default {
   name: "bar-chart",
   components: {
-    chart,
+    chart
   },
   data() {
     return {
