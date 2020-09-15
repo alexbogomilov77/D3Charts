@@ -1,8 +1,8 @@
 <template>
-  <svg ref="chart" class="d3-bar-chart" :width="w" :height="h" v-if="ready">
+  <svg ref="chart" class="chart" :width="w" :height="h" v-if="ready">
     <!-- options -->
     <defs>
-      <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
         <stop offset="0%" style="stop-color:rgb(177, 205, 195);stop-opacity:1" />
         <stop offset="100%" style="stop-color:rgb(135, 170, 157);stop-opacity:1" />
       </linearGradient>
@@ -22,7 +22,7 @@
       >
         <text
           :class="['name', {active: d.name === activeBarName}]"
-          :style="`transform: translate(${- mdSpace / 2}px, ${d.yOffset + rectHeight / 2}px)`">
+          :style="`transform: translate(${- lgSpace / 2}px, ${d.yOffset + rectHeight / 2}px)`">
           {{ d.name }}
         </text>
         <circle
@@ -30,20 +30,20 @@
           cx="27"
           cy="27"
           fill="rgb(135, 170, 157)"
-          :style="`transform: translate(${- mdSpace - 2}px, ${d.yOffset - xsSpace - 2}px)`"
+          :style="`transform: translate(${- lgSpace - 2}px, ${d.yOffset - xsSpace - 2}px)`"
         />
         <image
           width="50"
           height="50"
           :xlink:href="`${d.photo}`"
           clip-path="url(#clipCircle)"
-          :style="`transform: translate(${- mdSpace}px, ${d.yOffset - xsSpace}px)`"
+          :style="`transform: translate(${- lgSpace}px, ${d.yOffset - xsSpace}px)`"
         />
         <rect
           :width="xScale(d.duration)"
           :height="rectHeight"
           :y="yScale(d.name)"
-          fill="url(#grad1)"
+          fill="url(#gradient)"
           @click="handleBarClick(d)"
           :class="['bar', {active: d.name === activeBarName}]"
         />
@@ -51,12 +51,12 @@
       <!-- tooltip -->
       <g v-if="activeBarName">
         <rect
-          :width="160"
+          :width="(lgSpace + 10)"
           :height="55"
           ry="3"
           rx="3"
-          :y="yScale(activeBarName) - 60"
-          :x="xScale(activeBarDur) - 160"
+          :y="yScale(activeBarName) - (mdSpace + 10)"
+          :x="xScale(activeBarDur) - (lgSpace + 10)"
           class="tooltip"
         >
         </rect>
@@ -67,14 +67,14 @@
           {{activeBarDur + 'min'}}
         </text>
         <text
-          :y="yScale(activeBarName) - 15"
-          :x="xScale(activeBarDur) - 150"
+          :y="yScale(activeBarName) - smSpace"
+          :x="xScale(activeBarDur) - lgSpace"
           class="tooltip-average-minutes-label">
           Team Average:
         </text>
         <text
-          :y="yScale(activeBarName) - 15"
-          :x="xScale(activeBarDur) - 60"
+          :y="yScale(activeBarName) - smSpace"
+          :x="xScale(activeBarDur) - (mdSpace + 10)"
           class="tooltip-average-minutes">
           {{avgMins + 'min'}}
         </text>
@@ -125,7 +125,9 @@ export default {
       yAxis: null,
       rectHeight: null,
       xsSpace: 5,
-      mdSpace: 150
+      smSpace: 15,
+      mdSpace: 50,
+      lgSpace: 150
     };
   },
   mounted() {
@@ -197,7 +199,7 @@ export default {
 };
 </script>
 <style lang="stylus">
-.d3-bar-chart {
+.chart {
   max-height: 100%;
   max-width: 100%;
   overflow: visible;
