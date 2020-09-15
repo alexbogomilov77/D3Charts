@@ -53,30 +53,30 @@
       <!-- tooltip -->
       <g v-if="activeBarName">
         <rect
-          :width="190"
-          :height="70"
+          :width="160"
+          :height="55"
           ry="3"
           rx="3"
-          :y="yScale(activeBarName) - 75"
+          :y="yScale(activeBarName) - 60"
           :x="xScale(activeBarDur) - 160"
           class="tooltip"
         >
         </rect>
         <text
-          :y="yScale(activeBarName) - 45"
-          :x="xScale(activeBarDur) - 95"
+          :y="yScale(activeBarName) - 35"
+          :x="xScale(activeBarDur) - 105"
           class="tooltip-minutes">
           {{activeBarDur + 'min'}}
         </text>
         <text
-          :y="yScale(activeBarName) - 20"
-          :x="xScale(activeBarDur) - 140"
+          :y="yScale(activeBarName) - 15"
+          :x="xScale(activeBarDur) - 150"
           class="tooltip-average-minutes-label">
-          Team Average
+          Team Average:
         </text>
         <text
-          :y="yScale(activeBarName) - 20"
-          :x="xScale(activeBarDur) - 40"
+          :y="yScale(activeBarName) - 15"
+          :x="xScale(activeBarDur) - 60"
           class="tooltip-average-minutes">
           {{avgMins + 'min'}}
         </text>
@@ -99,6 +99,7 @@
       <line :x1="xScale(avgMins)" :y1="yScale(activeBarName)" :x2="0" :y2="yScale(activeBarName)" stroke="#deaf47" stroke-width="3" />
       <!-- team average y line point -->
       <circle :cx="xScale(avgMins)" :cy="0" r="8" stroke="white" stroke-width="3" fill="#deaf47" />
+      <text :x="xScale(avgMins) - 45" :y="-20" fill="#e0c998">Team Average</text>
     </g>
   </svg>
 </template>
@@ -235,12 +236,10 @@ export default {
 }
 
 .bar {
-  // fill: #92b9a5;
   opacity: 0.2;
   stroke: none;
   transition: 0.1s;
   transition-duration: 0.1s;
-  transition-delay: 0.1s;
 
   &:hover {
     opacity: 1;
@@ -266,19 +265,19 @@ export default {
 }
 
 .tooltip-minutes {
-  font-size: 22px
+  font-size: 20px
   font-weight: bold
   fill: #656565
 }
 
 .tooltip-average-minutes {
-  font-size: 14px
+  font-size: 12px
   font-weight: bold
   fill: #deaf47
 }
 
 .tooltip-average-minutes-label {
-  font-size: 14px
+  font-size: 12px
   font-weight: bold
   fill: #c5c5c5
 }

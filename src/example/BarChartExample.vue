@@ -1,13 +1,18 @@
 <template>
   <div class="example">
     <div class="header">
-      <img class="activePhoto" :src="`${this.activePhoto}`">
-      <span class="active-name">
-        {{ activeName || 'Name' }}
-      </span>
-      <span class="label">
-        Engagement Overall
-      </span>
+      <div class="profile">
+        <img class="activePhoto" :src="`${this.activePhoto}`">
+        <div class="profile-details">
+          <span class="active-name">
+            {{ activeName || 'Name' }}
+          </span>
+          <span class="label">
+            Engagement Overall
+          </span>
+        </div>
+      </div>
+      <button class="export-btn">EXPORT</button>
     </div>
     <div class="bar-chart">
       <d3chart
@@ -58,7 +63,7 @@ export default {
         {
           "name": "Plamen",
           "photo": "https://media-exp1.licdn.com/dms/image/C4D03AQEhrpz1peV4Vw/profile-displayphoto-shrink_100_100/0?e=1605744000&v=beta&t=6Fyhb9prv-MpGvMvolloN-hyJr7SemdyPb0vQwTGoS0",
-          "duration": 30
+          "duration": 70
         }
       ],
       copyIcon,
@@ -79,8 +84,10 @@ export default {
 @import '../vars.styl';
 
 .header {
-  padding: 1vw 0 1vw 20px;
-  min-height: 40px;
+  display: flex
+  padding: 1vw 1.2vw 1vw 1.2vw
+  justify-content: space-between
+  min-height: 40px
   .active-name {
     font-size: 24px;
     display: block;
@@ -91,19 +98,41 @@ export default {
   }
 }
 
-.bar-chart {
-    padding: 30px 0;
-    background: #f0f0f0;
+.profile {
+  display: flex
+}
+
+.export-btn {
+  color: white
+  font-size: 12px
+  font-weight: bold
+  height: 35px
+  opacity: 0.5
+  padding: 0px 20px
+  border-radius: 10px
+  background: linear-gradient(90deg, rgb(177, 205, 195), rgb(135, 170, 157))
+  &:hover {
+    cursor pointer
+    opacity: 1
+    transition: 0.2s
   }
+}
+
+.bar-chart {
+  padding: 60px 0 30px 0;
+  background: #f0f0f0;
+  border-radius: 0 0 10px 10px;
+}
 
 .activePhoto {
   width: 50px;
   height 50px;
   border-radius: 50px;
+  margin-right: 15px;
 }
 
 .example {
   border-radius: 10px;
-  box-shadow: 2px 2px 8px alpha($color, 0.2);
+  box-shadow: 2px 2px 8px alpha(rgb(135, 170, 157), 0.2);
 }
 </style>
