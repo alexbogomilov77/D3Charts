@@ -105,7 +105,7 @@ import * as d3Shape from "d3-shape";
 import * as d3Axis from "d3-axis";
 const d3 = Object.assign({}, d3Select, d3array, d3scale, d3Shape, d3Axis);
 export default {
-  name: "d3chart",
+  name: "chart",
   props: {
     calldata: {
       type: Array,

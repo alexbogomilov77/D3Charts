@@ -15,23 +15,23 @@
       <button class="export-btn">EXPORT</button>
     </div>
     <div class="bar-chart">
-      <d3chart
+      <chart
         v-if="data"
         :calldata="data"
         @namePassed="namePassed($event)">
-      </d3chart>
+      </chart>
     </div>
   </div>
 </template>
 <script>
 /* eslint-disable */
-import d3chart from "@/d3chart.vue";
+import chart from "./chart.vue";
 import calldata from "@/calldata.json";
 
 export default {
   name: "bar-chart-example",
   components: {
-    d3chart,
+    chart,
   },
   data() {
     return {
@@ -118,6 +118,7 @@ export default {
   height: 35px
   opacity: 0.5
   padding: 0px 20px
+  margin-top: 7px
   border-radius: 10px
   background: linear-gradient(90deg, rgb(177, 205, 195), rgb(135, 170, 157))
   &:hover {

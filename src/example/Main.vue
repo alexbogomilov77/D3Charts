@@ -1,17 +1,17 @@
 <template lang="pug">
   #app
     .row
-      bar-chart-example
+      bar-chart
 </template>
 
 <script>
 import ghIcon from '../assets/github.svg?raw'
-import BarChartExample from './BarChartExample.vue'
+import BarChart from './BarChart.vue'
 
 export default {
-  name: 'example',
+  name: 'Main',
   components: {
-    BarChartExample
+    BarChart
   },
   data () {
     return {
