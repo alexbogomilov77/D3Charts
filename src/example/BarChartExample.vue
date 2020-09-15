@@ -26,9 +26,7 @@
 <script>
 /* eslint-disable */
 import d3chart from "@/d3chart.vue";
-import bars2 from "./data/bars2";
 import calldata from "@/calldata.json";
-// const d3 = Object.assign({}, csv);
 
 export default {
   name: "bar-chart-example",
@@ -64,7 +62,6 @@ export default {
           "duration": 70
         }
       ],
-      charts: { bars2 },
       activeName: "",
       activePhoto: ""
     };
