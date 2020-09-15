@@ -1,12 +1,6 @@
 <template>
   <svg ref="chart" class="d3-bar-chart" :width="w" :height="h" v-if="ready">
-    <!-- <defs>
-      <filter id="f1" x="0" y="0" width="200%" height="200%">
-        <feOffset result="offOut" in="SourceGraphic" dx="20" dy="20" />
-        <feGaussianBlur result="blurOut" in="offOut" stdDeviation="10" />
-        <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
-      </filter>
-    </defs> -->
+    <!-- options -->
     <defs>
       <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
         <stop offset="0%" style="stop-color:rgb(177, 205, 195);stop-opacity:1" />
@@ -16,7 +10,10 @@
     <clipPath id="clipCircle">
       <circle r="25" cx="25" cy="25"/>
     </clipPath>
+    <!-- options -->
+    <!-- label -->
     <text :x="xScale(avgMins) - 45" :y="-20" fill="#e0c998">Team Average</text>
+    <!-- charts -->
     <g class="bars">
       <g
         v-for="(d,i) in calldata"
@@ -82,7 +79,6 @@
           {{avgMins + 'min'}}
         </text>
       </g>
-      <!-- tooltip -->
       <!-- time -->
       <text
         v-for="d in calldata"
@@ -91,9 +87,8 @@
         :y="yScale(d.name) + rectHeight / 2 + xsSpace"
         :x="xScale(d.duration) - 50"
       >
-      {{d.duration + 'min'}}
+        {{d.duration + 'min'}}
       </text>
-      <!-- time -->
       <!-- team average -->
       <line :x1="xScale(avgMins)" :y1="h" :x2="xScale(avgMins)" :y2="0" stroke="#deaf47" stroke-width="2" stroke-dasharray="10 5" />
       <line :x1="xScale(avgMins)" :y1="yScale(activeBarName)" :x2="0" :y2="yScale(activeBarName)" stroke="#deaf47" stroke-width="3" />
@@ -108,7 +103,6 @@ import * as d3array from "d3-array";
 import * as d3scale from "d3-scale";
 import * as d3Shape from "d3-shape";
 import * as d3Axis from "d3-axis";
-// import defaultOptions from "./defaultOptions";
 const d3 = Object.assign({}, d3Select, d3array, d3scale, d3Shape, d3Axis);
 export default {
   name: "d3chart",
@@ -203,16 +197,6 @@ export default {
 };
 </script>
 <style lang="stylus">
-.label {
-  font-size: 12px;
-  fill: white;
-  font-weight: bold;
-}
-
-.names {
-  fill: darkgreen;
-}
-
 .d3-bar-chart {
   max-height: 100%;
   max-width: 100%;
@@ -246,7 +230,14 @@ export default {
   }
 }
 
+.label {
+  font-size: 12px;
+  fill: white;
+  font-weight: bold;
+}
+
 .name {
+  fill: #225057;
   opacity: 0.2;
 }
 

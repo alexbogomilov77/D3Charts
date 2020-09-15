@@ -1,5 +1,5 @@
 <template>
-  <div class="example">
+  <div class="wrapper">
     <div class="header">
       <div class="profile">
         <img class="activePhoto" :src="`${this.activePhoto}`">
@@ -16,8 +16,8 @@
     </div>
     <div class="bar-chart">
       <d3chart
-        v-if="savedData"
-        :calldata="savedData"
+        v-if="data"
+        :calldata="data"
         @namePassed="namePassed($event)">
       </d3chart>
     </div>
@@ -25,8 +25,6 @@
 </template>
 <script>
 /* eslint-disable */
-import copyIcon from "../assets/copy.svg?raw";
-// import d3Barchart from "../vue-d3-barchart.vue";
 import d3chart from "@/d3chart.vue";
 import bars2 from "./data/bars2";
 import calldata from "@/calldata.json";
@@ -39,7 +37,7 @@ export default {
   },
   data() {
     return {
-      savedData: [
+      data: [
         {
           "name": "Shelley",
           "photo": "https://media-exp1.licdn.com/dms/image/C5603AQFMfGsGyuPTvg/profile-displayphoto-shrink_400_400/0?e=1605744000&v=beta&t=8kdl-wiSwf6q_HSosG6EJJPsf07q4EZUMP6GdrFzL7M",
@@ -66,7 +64,6 @@ export default {
           "duration": 70
         }
       ],
-      copyIcon,
       charts: { bars2 },
       activeName: "",
       activePhoto: ""
@@ -81,12 +78,26 @@ export default {
 };
 </script>
 <style lang="stylus">
-@import '../vars.styl';
+#app, .row
+  display flex
+  justify-content center
+  align-items center
+
+#app
+  user-select none
+  flex-flow column wrap
+  min-height 100vh
+
+.wrapper {
+  border-radius: 10px;
+  box-shadow: 2px 2px 8px alpha(rgb(135, 170, 157), 0.2);
+}
 
 .header {
   display: flex
   padding: 1vw 1.2vw 1vw 1.2vw
   justify-content: space-between
+  background: linear-gradient(90deg, #f9f9f9, #fff);
   min-height: 40px
   .active-name {
     font-size: 24px;
@@ -129,10 +140,5 @@ export default {
   height 50px;
   border-radius: 50px;
   margin-right: 15px;
-}
-
-.example {
-  border-radius: 10px;
-  box-shadow: 2px 2px 8px alpha(rgb(135, 170, 157), 0.2);
 }
 </style>
