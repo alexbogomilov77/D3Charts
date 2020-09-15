@@ -1,5 +1,5 @@
 <template>
-  <svg ref="chart" class="chart" :width="w" :height="h" v-if="ready">
+  <svg class="chart" :width="w" :height="h" v-if="ready">
     <!-- options -->
     <defs>
       <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -14,6 +14,7 @@
     <!-- label -->
     <text :x="xScale(avgMins) - 45" :y="-20" fill="#e0c998">Team Average</text>
     <!-- charts -->
+    <g ref="yLines"></g>
     <g class="bars">
       <g
         v-for="(d,i) in calldata"
@@ -173,7 +174,7 @@ export default {
       let self = this;
 
       this.$nextTick(() => {
-        const svg = self.$refs.chart
+        const svg = self.$refs.yLines
         const svgElement = d3.select(svg)
         const xAxisGenerator = d3.axisBottom(self.xScale).tickSize(self.h)
 
